@@ -7,7 +7,7 @@
   display: flex;
   align-items: center;
   padding: 8px 12px;
-  background: lighten($ui-base-color, 4%);
+  background: lighten($ui-base-color, 10%);
   font-size: 16px;
 
   a {
@@ -45,7 +45,7 @@
     display: flex;
     padding: 10px;
     color: $classic-base-color;
-    background: darken($white, 10%);
+    background: lighten($ui-base-color, 10%);
     border-radius: 4px;
     margin-top: 10px;
   }

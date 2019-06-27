@@ -998,7 +998,8 @@ ja:
     title: "%{instance} 利用規約・プライバシーポリシー"
   themes:
     cure-orange: キュアオレンジ
-    cure-lime: キュアライム
+    cure-lime: キュアライム（ユリアーモ）
+    cure-ayame: キュアあやめ（ユリアーモ）
     contrast: Mastodon (ハイコントラスト)
     default: Mastodon (ダーク)
     mastodon-light: Mastodon (ライト)

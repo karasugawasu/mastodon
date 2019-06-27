@@ -919,8 +919,9 @@ eo:
   terms:
     title: Uzkondiĉoj kaj privateca politiko de %{instance}
   themes:
-    cure-orange: Cure oranĝo (Luma)
-    cure-lime: Cure lime (Luma)
+    cure-orange: Cure oranĝo
+    cure-lime: Cure lime (Juliamo)
+    cure-ayame: Cure Ayame (Juliamo)
     juliamo-mastodon-light: Juliamo (Luma)
     contrast: Mastodon (Forta kontrasto)
     default: Mastodon (Malluma)

@@ -8,7 +8,7 @@ import classnames from 'classnames';
 import PollContainer from 'mastodon/containers/poll_container';
 import Icon from 'mastodon/components/icon';
 
-const MAX_HEIGHT = 202; // 20px * 10 (+ 2px padding at the top)
+const MAX_HEIGHT = 302; // 20px * 15 (+ 2px padding at the top)
 
 export default class StatusContent extends React.PureComponent {
 

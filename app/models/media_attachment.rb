@@ -26,14 +26,14 @@ class MediaAttachment < ApplicationRecord
 
   enum type: [:image, :gifv, :video, :unknown, :audio]
 
-  IMAGE_FILE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp'].freeze
-  VIDEO_FILE_EXTENSIONS = ['.webm', '.mp4', '.m4v', '.mov'].freeze
-  AUDIO_FILE_EXTENSIONS = ['.ogg', '.oga', '.mp3', '.wav', '.flac', '.opus'].freeze
+  IMAGE_FILE_EXTENSIONS = %w(.jpg .jpeg .png .gif .webp).freeze
+  VIDEO_FILE_EXTENSIONS = %w(.webm .mp4 .m4v .mov).freeze
+  AUDIO_FILE_EXTENSIONS = %w(.ogg .oga .mp3 .wav .flac .opus .aac .m4a .3gp).freeze
 
-  IMAGE_MIME_TYPES             = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].freeze
-  VIDEO_MIME_TYPES             = ['video/webm', 'video/mp4', 'video/quicktime', 'video/ogg'].freeze
-  VIDEO_CONVERTIBLE_MIME_TYPES = ['video/webm', 'video/quicktime'].freeze
-  AUDIO_MIME_TYPES             = ['audio/wave', 'audio/wav', 'audio/x-wav', 'audio/x-pn-wave', 'audio/ogg', 'audio/mpeg', 'audio/mp3', 'audio/webm', 'audio/flac'].freeze
+  IMAGE_MIME_TYPES             = %w(image/jpeg image/png image/gif image/webp).freeze
+  VIDEO_MIME_TYPES             = %w(video/webm video/mp4 video/quicktime video/ogg).freeze
+  VIDEO_CONVERTIBLE_MIME_TYPES = %w(video/webm video/quicktime).freeze
+  AUDIO_MIME_TYPES             = %w(audio/wave audio/wav audio/x-wav audio/x-pn-wave audio/ogg audio/mpeg audio/mp3 audio/webm audio/flac audio/aac audio/m4a audio/3gpp).freeze
 
   BLURHASH_OPTIONS = {
     x_comp: 4,
@@ -42,7 +42,7 @@ class MediaAttachment < ApplicationRecord
 
   IMAGE_STYLES = {
     original: {
-      pixels: 6_502_500, # 2550x2550px
+      pixels: 1_638_400, # 1280x1280px
       file_geometry_parser: FastGeometryParser,
     },
 
@@ -113,7 +113,7 @@ class MediaAttachment < ApplicationRecord
   has_attached_file :file,
                     styles: ->(f) { file_styles f },
                     processors: ->(f) { file_processors f },
-                    convert_options: { all: '-quality 90 -strip' }
+                    convert_options: { all: '-quality 90 -strip +set modify-date +set create-date' }
 
   validates_attachment_content_type :file, content_type: IMAGE_MIME_TYPES + VIDEO_MIME_TYPES + AUDIO_MIME_TYPES
   validates_attachment_size :file, less_than: IMAGE_LIMIT, unless: :larger_media_format?
@@ -173,8 +173,7 @@ class MediaAttachment < ApplicationRecord
   after_commit :reset_parent_cache, on: :update
   before_create :prepare_description, unless: :local?
   before_create :set_shortcode
-  before_post_process :set_type, :set_extension
-  after_post_process :set_extension
+  before_post_process :set_type_and_extension
   before_save :set_meta
 
   class << self
@@ -203,8 +202,6 @@ class MediaAttachment < ApplicationRecord
     def file_processors(f)
       if f.file_content_type == 'image/gif'
         [:gif_transcoder, :blurhash_transcoder]
-      elsif f.file_content_type == 'image/png'
-        [:img_converter, :thumbnail, :blurhash_transcoder]
       elsif VIDEO_MIME_TYPES.include?(f.file_content_type)
         [:video_transcoder, :blurhash_transcoder, :type_corrector]
       elsif AUDIO_MIME_TYPES.include?(f.file_content_type)
@@ -232,7 +229,7 @@ class MediaAttachment < ApplicationRecord
     self.description = description.strip[0...420] unless description.nil?
   end
 
-  def set_type
+  def set_type_and_extension
     self.type = begin
       if VIDEO_MIME_TYPES.include?(file_content_type)
         :video
@@ -242,12 +239,6 @@ class MediaAttachment < ApplicationRecord
         :image
       end
     end
-  end
-
-  def set_extension
-    extension = appropriate_extension(file)
-    basename  = Paperclip::Interpolations.basename(file, :original)
-    file.instance_write :file_name, [basename, extension].delete_if(&:blank?).join('.')
   end
 
   def set_meta

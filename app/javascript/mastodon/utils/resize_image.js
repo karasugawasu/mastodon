@@ -1,6 +1,6 @@
 import EXIF from 'exif-js';
 
-const MAX_IMAGE_PIXELS = 6502500; // 2550x2550px
+const MAX_IMAGE_PIXELS = 1638400; // 1280x1280px
 
 const getImageUrl = inputFile => new Promise((resolve, reject) => {
   if (window.URL && URL.createObjectURL) {
@@ -67,11 +67,15 @@ const processImage = (img, { width, height, orientation, type = 'image/png' }) =
 
   context.drawImage(img, 0, 0, width, height);
 
-  if (type === 'image/png') {
-    canvas.toBlob(resolve, 'image/jpeg',1);
-  }else{
-    canvas.toBlob(resolve, type);
+  // The Tor Browser and maybe other browsers may prevent reading from canvas
+  // and return an all-white image instead. Assume reading failed if the resized
+  // image is perfectly white.
+  const imageData = context.getImageData(0, 0, width, height);
+  if (imageData.every(value => value === 255)) {
+    throw 'Failed to read from canvas';
   }
+
+  canvas.toBlob(resolve, type);
 });
 
 const resizeImage = (img, type = 'image/png') => new Promise((resolve, reject) => {

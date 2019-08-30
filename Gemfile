@@ -79,6 +79,7 @@ gem 'rails-i18n', '~> 5.1'
 gem 'rails-settings-cached', '~> 0.6'
 gem 'redis', '~> 4.2', require: ['redis', 'redis/connection/hiredis']
 gem 'mario-redis-lock', '~> 1.2', require: 'redis_lock'
+gem 'mimemagic', :git => 'https://github.com/mashirozx/mimemagic-0.3.5', branch: 'main', ref: '09ac528565f46e6b865c7c044a9f255683231411'
 gem 'rqrcode', '~> 1.1'
 gem 'ruby-progressbar', '~> 1.10'
 gem 'sanitize', '~> 5.2'

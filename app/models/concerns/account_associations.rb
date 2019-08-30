@@ -63,5 +63,12 @@ module AccountAssociations
 
     # Account deletion requests
     has_one :deletion_request, class_name: 'AccountDeletionRequest', inverse_of: :account, dependent: :destroy
+    has_many :follow_tags, -> { includes(:tag) }, dependent: :destroy, inverse_of: :account
+
+    # KeywordSubscribes
+    has_many :keyword_subscribes, inverse_of: :account, dependent: :destroy
+
+    # DomainSubscribes
+    has_many :domain_subscribes, inverse_of: :account, dependent: :destroy
   end
 end

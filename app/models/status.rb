@@ -228,6 +228,18 @@ class Status < ApplicationRecord
     @emojis = CustomEmoji.from_text(fields.join(' '), account.domain)
   end
 
+  def index_text
+    @index_text ||= [spoiler_text, Formatter.instance.plaintext(self)].concat(media_attachments.map(&:description)).concat(preloadable_poll ? preloadable_poll.options : []).join("\n\n")
+  end
+
+  def mark_for_mass_destruction!
+    @marked_for_mass_destruction = true
+  end
+
+  def marked_for_mass_destruction?
+    @marked_for_mass_destruction
+  end
+
   def replies_count
     status_stat&.replies_count || 0
   end

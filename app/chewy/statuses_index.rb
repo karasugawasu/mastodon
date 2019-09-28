@@ -2,22 +2,30 @@
 
 class StatusesIndex < Chewy::Index
   settings index: { refresh_interval: '15m' }, analysis: {
-    tokenizer: {
-      kuromoji_user_dict: {
-        type: 'kuromoji_neologd_tokenizer',
-        user_dictionary: 'userdic.txt',
+    filter: {
+      english_stop: {
+        type: 'stop',
+        stopwords: '_english_',
+      },
+      english_stemmer: {
+        type: 'stemmer',
+        language: 'english',
+      },
+      english_possessive_stemmer: {
+        type: 'stemmer',
+        language: 'possessive_english',
       },
     },
-
     analyzer: {
       content: {
-        type: 'custom',
-        tokenizer: 'kuromoji_neologd_tokenizer',
+        tokenizer: 'uax_url_email',
         filter: %w(
-          kuromoji_neologd_baseform
-          kuromoji_neologd_stemmer
-          cjk_width
+          english_possessive_stemmer
           lowercase
+          asciifolding
+          cjk_width
+          english_stop
+          english_stemmer
         ),
       },
     },
@@ -43,7 +51,7 @@ class StatusesIndex < Chewy::Index
       field :id, type: 'long'
       field :account_id, type: 'long'
 
-      field :text, type: 'text', value: ->(status) { [status.spoiler_text, Formatter.instance.plaintext(status)].concat(status.media_attachments.map(&:description)).concat(status.preloadable_poll ? status_preloadable_poll.options : []).join("\n\n") } do
+      field :text, type: 'text', value: ->(status) { [status.spoiler_text, Formatter.instance.plaintext(status)].concat(status.media_attachments.map(&:description)).concat(status.preloadable_poll ? status.preloadable_poll.options : []).join("\n\n") } do
         field :stemmed, type: 'text', analyzer: 'content'
       end
 

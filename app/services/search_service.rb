@@ -11,12 +11,10 @@ class SearchService < BaseService
 
     default_results.tap do |results|
       if url_query?
-        results.merge!(url_resource_results) unless url_resource.nil?
+        results.merge!(url_resource_results) unless url_resource.nil? || (@options[:type].present? && url_resource_symbol != @options[:type].to_sym)
       elsif @query.present?
         results[:accounts] = perform_accounts_search! if account_searchable?
-        results[:statuses] = perform_statuses_search!
-        results[:statuses].concat(perform_mediadescription_search!)
-        results[:statuses] = results[:statuses].uniq.sort_by{|v| v['updated_at']}.reverse.first(@limit)
+        results[:statuses] = perform_statuses_search! if full_text_searchable?
         results[:hashtags] = perform_hashtags_search! if hashtag_searchable?
       end
     end
@@ -35,48 +33,34 @@ class SearchService < BaseService
   end
 
   def perform_statuses_search!
-    statuses = Status.joins(:account)
-      .where('accounts.domain IS NULL')
-      .where('statuses.local=true')
-      .limit(@limit)
-    @query.split(/[\s　]+/).each do |keyword|
-      if (matches = keyword.match(/^-(.*)/))
-        keyword = matches[1]
-        statuses = statuses.where('statuses.text !~ ?', keyword)
-      else
-        statuses = statuses.where('statuses.text ~ ?', keyword)
-      end
-    end
-    statuses.reject { |status| StatusFilter.new(status, @account).filtered? }
-  rescue Faraday::ConnectionFailed
-    []
-  end
+    definition = parsed_query.apply(StatusesIndex.filter(term: { searchable_by: @account.id }))
 
-  def perform_mediadescription_search!
-    medias = Status
-      .joins(:account)
-      .joins(:media_attachments)
-      .where('accounts.domain IS NULL')
-      .where('statuses.local=true')
-      .limit(@limit)
-    @query.split(/[\s　]+/).each do |keyword|
-      if (matches = keyword.match(/^-(.*)/))
-        keyword = matches[1]
-        medias = medias.where('media_attachments.description !~ ?', keyword)
-      else
-        medias = medias.where('media_attachments.description ~ ?', keyword)
-      end
+    if @options[:account_id].present?
+      definition = definition.filter(term: { account_id: @options[:account_id] })
     end
-    medias.reject { |status| StatusFilter.new(status, @account).filtered? }
-  rescue Faraday::ConnectionFailed
+
+    if @options[:min_id].present? || @options[:max_id].present?
+      range      = {}
+      range[:gt] = @options[:min_id].to_i if @options[:min_id].present?
+      range[:lt] = @options[:max_id].to_i if @options[:max_id].present?
+      definition = definition.filter(range: { id: range })
+    end
+
+    results             = definition.limit(@limit).offset(@offset).objects.compact
+    account_ids         = results.map(&:account_id)
+    account_domains     = results.map(&:account_domain)
+    preloaded_relations = relations_map_for_account(@account, account_ids, account_domains)
+
+    results.reject { |status| StatusFilter.new(status, @account, preloaded_relations).filtered? }
+  rescue Faraday::ConnectionFailed, Parslet::ParseFailed
     []
   end
 
   def perform_hashtags_search!
-    Tag.search_for(
-      @query.gsub(/\A#/, ''),
-      @limit,
-      @offset
+    TagSearchService.new.call(
+      @query,
+      limit: @limit,
+      offset: @offset
     )
   end
 
@@ -85,7 +69,7 @@ class SearchService < BaseService
   end
 
   def url_query?
-    @options[:type].blank? && @query =~ /\Ahttps?:\/\//
+    @resolve && @query =~ /\Ahttps?:\/\//
   end
 
   def url_resource_results
@@ -134,5 +118,9 @@ class SearchService < BaseService
       following: Account.following_map(account_ids, account.id),
       domain_blocking_by_domain: Account.domain_blocking_map_by_domain(domains, account.id),
     }
+  end
+
+  def parsed_query
+    SearchQueryTransformer.new.apply(SearchQueryParser.new.parse(@query))
   end
 end

@@ -535,7 +535,7 @@ ja:
       reviewed: 審査済み
       title: ハッシュタグ
       trending_right_now: 現在のトレンド
-      unique_uses_today: 本日 %{count} 人がトゥートに使用
+      unique_uses_today: 本日 %{count} 人がキュア！に使用
       unreviewed: 未審査
       updated_msg: ハッシュタグ設定が更新されました
     title: 管理
@@ -1163,7 +1163,7 @@ ja:
         suspend: あなたのアカウントは停止されています。あなたの投稿とアップロードされたメディアファイルは、このサーバーとあなたのフォロワーが参加していたサーバーから完全に削除されました。
       get_in_touch: このメールに返信することで %{instance} のスタッフと連絡を取ることができます。
       review_server_policies: サーバーのポリシーを確認
-      statuses: '特に次のトゥート:'
+      statuses: '特に次のキュア！:'
       subject:
         disable: あなたのアカウント %{acct} は凍結されています
         none: "%{acct} に対する警告"

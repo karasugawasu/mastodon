@@ -70,7 +70,6 @@ const reducers = {
   filters,
   conversations,
   suggestions,
-  announcements,
   polls,
   trends,
   missed_updates,

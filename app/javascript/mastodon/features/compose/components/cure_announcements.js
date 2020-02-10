@@ -30,7 +30,7 @@ export default class CureAnnouncements extends React.PureComponent {
     const { visible, onToggle } = this.props;
     const caretClass = visible ? 'fa fa-caret-down' : 'fa fa-caret-up';
     return (
-      <div className='cure_ennouncements'>
+      <div className='cure_announcements'>
         <div className='compose__extra__header'>
           <i className='fa fa-link' />
           おしらせ＆関連リンク
@@ -40,7 +40,7 @@ export default class CureAnnouncements extends React.PureComponent {
         </div>
         { visible && (
           <ul>
-            {cure_announcements.map((announcement, idx) => (
+            {cure_announcements.map((cure_announcement, idx) => (
               <li key={idx}>
                 <div className='cure_announcements__icon'>
                   <i className='fa fa-bookmark' />

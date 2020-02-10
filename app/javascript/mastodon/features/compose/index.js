@@ -14,7 +14,7 @@ import SearchResultsContainer from './containers/search_results_container';
 import { changeComposing } from '../../actions/compose';
 import { openModal } from 'mastodon/actions/modal';
 import elephantUIPlane from '../../../images/elephant_ui_plane.svg';
-import AnnouncementsContainer from './containers/cure_announcements_container';
+import CureAnnouncementsContainer from './containers/cure_announcements_container';
 import { mascot } from '../../initial_state';
 import Icon from 'mastodon/components/icon';
 import { logOut } from 'mastodon/utils/log_out';

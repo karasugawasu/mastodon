@@ -14,7 +14,7 @@ import SearchResultsContainer from './containers/search_results_container';
 import { changeComposing } from '../../actions/compose';
 import { openModal } from 'mastodon/actions/modal';
 import elephantUIPlane from '../../../images/elephant_ui_plane.svg';
-import AnnouncementsContainer from './containers/announcements_container';
+import AnnouncementsContainer from './containers/cure_announcements_container';
 import { mascot } from '../../initial_state';
 import Icon from 'mastodon/components/icon';
 import { logOut } from 'mastodon/utils/log_out';
@@ -128,7 +128,7 @@ class Compose extends React.PureComponent {
             <NavigationContainer onClose={this.onBlur} />
 
             <ComposeFormContainer />
-            <AnnouncementsContainer />
+            <CureAnnouncementsContainer />
             {multiColumn && (
               <div className='drawer__inner__mastodon'>
                 <img alt='' draggable='false' src={mascot || elephantUIPlane} />

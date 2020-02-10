@@ -1,5 +1,5 @@
 /**
-  * features/compose/components/annoucements
+  * features/compose/components/cure_annoucements
   */
 .compose__extra__header {
   background: $ui-base-color;
@@ -34,7 +34,7 @@
   }
 }
 
-.announcements {
+.cure_announcements {
   margin: 10px 0;
 
   ul {
@@ -50,7 +50,7 @@
     margin-top: 10px;
   }
 
-  .announcements__icon {
+  .cure_announcements__icon {
     flex: 0 0 auto;
     display: inline-block;
     overflow: hidden;
@@ -58,7 +58,7 @@
     height: 22px;
   }
 
-  .announcements__body {
+  .cure_announcements__body {
     width: 100%;
 
     p {

@@ -30,7 +30,7 @@ import listAdder from './list_adder';
 import filters from './filters';
 import conversations from './conversations';
 import suggestions from './suggestions';
-import announcements from './announcements';
+import cure_announcements from './cure_announcements';
 import polls from './polls';
 import identity_proofs from './identity_proofs';
 import trends from './trends';
@@ -66,7 +66,7 @@ const reducers = {
   lists,
   listEditor,
   listAdder,
-  announcements,
+  cure_announcements,
   filters,
   conversations,
   suggestions,

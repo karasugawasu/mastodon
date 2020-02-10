@@ -1,13 +1,13 @@
 import Immutable from 'immutable';
-import { TOGGLE_ANNOUNCEMENTS } from '../actions/announcements';
+import { TOGGLE_CUREANNOUNCEMENTS } from '../actions/cure_announcements';
 
 const initialState = Immutable.Map({
   visible: true,
 });
 
-export default function announcements(state = initialState, action) {
+export default function cure_announcements(state = initialState, action) {
   switch(action.type) {
-  case TOGGLE_ANNOUNCEMENTS:
+  case TOGGLE_CUREANNOUNCEMENTS:
     return state.set('visible', !state.get('visible'));
   default:
     return state;

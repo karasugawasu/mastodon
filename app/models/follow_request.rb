@@ -29,8 +29,7 @@ class FollowRequest < ApplicationRecord
   validates :account_id, uniqueness: { scope: :target_account_id }
 
   def authorize!
-    account.follow!(target_account, reblogs: show_reblogs, notify: notify, uri: uri)
-    UnsubscribeAccountService.new.call(account, target_account) if account.subscribing?(target_account)
+    account.follow!(target_account, reblogs: show_reblogs, notify: notify, uri: uri, bypass_limit: true)
     MergeWorker.perform_async(target_account.id, account.id) if account.local?
     destroy!
   end

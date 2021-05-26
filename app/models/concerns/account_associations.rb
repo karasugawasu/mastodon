@@ -70,5 +70,8 @@ module AccountAssociations
 
     # DomainSubscribes
     has_many :domain_subscribes, inverse_of: :account, dependent: :destroy
+
+    # Follow recommendations
+    has_one :follow_recommendation_suppression, inverse_of: :account, dependent: :destroy
   end
 end

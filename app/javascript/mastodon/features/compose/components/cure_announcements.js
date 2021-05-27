@@ -6,15 +6,12 @@ import { Link } from 'react-router-dom';
 
 const cure_announcements = Immutable.fromJS([
   {
-    body: '当インスタンスの使い方などはこちら',
+    body: 'モロヘイヤ',
     links: [
-      { href: 'https://crowi.precure.fun/mstdn.precure', body: 'Ｗｉｋｉ' }
-    ]
-  },
-  {
-    body: '重要なお知らせはインフォメーションアカウントを確認してください',
-    links: [
-      { href: 'https://precure.ml/@infomation', body: 'キュアスタ！お知らせアカウント'}
+      {href: '/mulukhiya', body: 'Home'},
+      {href: '/mulukhiya/app/config', body: '設定'},
+      {href: '/mulukhiya/app/media', body: 'メディア'},
+      {href: '/mulukhiya/app/api', body: 'API'},
     ]
   }
 ]);
